@@ -1,15 +1,16 @@
 #include <quadtree.hpp>
+#include <string.h>
 
 std::ostream& operator<<(std::ostream& os, const Pixel& p)
 {
     switch(p.color)
     {
     case PIXEL_EMPTY:
-        os << " ";
+        os << "  ";
         break;
     
     case PIXEL_BLACK :
-        os << "#";
+        os << "# ";
         break;
     }
 
@@ -36,25 +37,55 @@ void Quadtree::set_max_depth(int newmd)
     sizeh.y = size.y/2;
 }
 
+void Quadnode::del()
+{
+    if(topl)
+    {
+        delete topl;
+    }
+
+    if(topr)
+    {
+        delete topr;
+    }
+
+    if(botl)
+    {
+        delete botl;
+    }
+
+    if(botr)
+    {
+        delete botr;
+    }
+}
+
 Quadnode::~Quadnode()
 {
-    if(topl) delete topl;
-    if(topr) delete topr;
-    if(botl) delete botl;
-    if(botr) delete botr;
+    del();
 }
 
 void Quadtree::generate_debug()
 {
     root.topl = new Quadnode;
-    root.topl->val.color = PIXEL_BLACK;
+    root.topl->val.color = (uint8_t)PIXEL_BLACK;
+    root.topl->isleaf = true;
+    root.topl->depth = 1;
+
+    root.botr = new Quadnode;
+    root.botr->topl = new Quadnode;
+    root.botr->depth = 1;
+
+    root.botr->topl->val.color = (uint8_t)PIXEL_BLACK;
+    root.botr->topl->isleaf = true;
+    root.botr->topl->depth = 2;
 }
 
 Pixel Quadtree::pixel(coord2D coord)
 {
-    Quadnode *qn = &root;
+    Quadnode const *qn = &root;
 
-    while(qn && qn->val.color == NODE_NON_UNIFORM)
+    while(qn && !qn->isleaf)
     {
         if(coord.x < sizeh.x)
         {
@@ -78,6 +109,14 @@ Pixel Quadtree::pixel(coord2D coord)
                 qn = qn->topr;
             }
         }
+
+        coord.x *= 2;
+        coord.y *= 2;
+    }
+
+    if(qn && qn->depth >= 1)
+    {
+        std::cout << "q";
     }
 
     if(qn) return qn->val;
@@ -89,4 +128,18 @@ Pixel Quadtree::pixel(coord2D coord)
 void Quadtree::place(Pixel_color color, coord2D start, coord2D end)
 {
 
+}
+
+
+void Quadtree::print()
+{
+    for(int x = 0; x < size.x; x++)
+    {
+        for(int y = 0; y < size.y; y++)
+        {
+            std::cout << pixel({x, y});
+        }
+        
+        std::cout << "|\n";
+    }
 }

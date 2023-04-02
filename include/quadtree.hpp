@@ -9,12 +9,12 @@
 
 typedef enum
 {
-    NODE_NON_UNIFORM = 0b11111111,
+    NODE_UNIFORM = 0b11111111,
     PIXEL_EMPTY = 0,
     PIXEL_BLACK = 1,
 } Pixel_color;
 
-#define DEFAULT_DEPTH 4
+#define DEFAULT_DEPTH 3
 
 struct Pixel
 {
@@ -32,15 +32,17 @@ struct coord2D
 std::ostream& operator<<(std::ostream& os, const coord2D& p);
 
 struct Quadnode
-{
-    Pixel val = {NODE_NON_UNIFORM};
+{   
+    Pixel val = {PIXEL_EMPTY};
     uint8_t depth = 0;
+    bool isleaf = false;
 
     Quadnode *topl = nullptr;
     Quadnode *topr = nullptr;
     Quadnode *botl = nullptr;
     Quadnode *botr = nullptr;
 
+    void del();
     ~Quadnode();
 };
 
@@ -60,6 +62,7 @@ class Quadtree
         void place(Pixel_color color, coord2D start, coord2D end);
 
         void generate_debug();
+        void print();
 };
 
 

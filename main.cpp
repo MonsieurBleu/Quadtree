@@ -14,7 +14,10 @@ int main(int argv, char* argc[])
     atexit(checkheap);
     std::cout << "~~~ QUADTREE ~~~\n";
 
+    Quadtree qt;
+    qt.generate_debug();
 
+    qt.print();
 
     return EXIT_SUCCESS;
 }
