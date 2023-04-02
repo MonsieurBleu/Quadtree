@@ -73,50 +73,60 @@ void Quadtree::generate_debug()
     root.topl->depth = 1;
 
     root.botr = new Quadnode;
-    root.botr->topl = new Quadnode;
     root.botr->depth = 1;
 
+    root.botr->topl = new Quadnode;
     root.botr->topl->val.color = (uint8_t)PIXEL_BLACK;
     root.botr->topl->isleaf = true;
     root.botr->topl->depth = 2;
+
+    root.botr->topr = new Quadnode;
+    root.botr->topr->val.color = (uint8_t)PIXEL_BLACK;
+    root.botr->topr->isleaf = true;
+    root.botr->topr->depth = 2;
 }
 
 Pixel Quadtree::pixel(coord2D coord)
 {
     Quadnode const *qn = &root;
 
+    coord2D s = sizeh;
+
     while(qn && !qn->isleaf)
-    {
-        if(coord.x < sizeh.x)
+    {   
+        if(coord.x < s.x)
         {
-            if(coord.y < sizeh.y) // bottom left
+            s.x >>= 1;
+
+            if(coord.y < s.y) // bottom left
             {
+                s.y >>= 1;
                 qn = qn->botl;
             }
             else // bottom right
             {
+                s.y += s.y>>1;
                 qn = qn->botr;
             }
         }
         else
         {
-            if(coord.y < sizeh.y) // top left
+            s.x += s.x>>1;
+
+            if(coord.y < s.y) // top left
             {
+                s.y >>= 1;
                 qn = qn->topl;
             }
             else // top right
             {
+                s.y += s.y>>1;
                 qn = qn->topr;
             }
         }
 
-        coord.x *= 2;
-        coord.y *= 2;
-    }
-
-    if(qn && qn->depth >= 1)
-    {
-        std::cout << "q";
+        // coord.x *= 2;
+        // coord.y *= 2;
     }
 
     if(qn) return qn->val;
