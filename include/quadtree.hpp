@@ -3,6 +3,21 @@
 
 #include <iostream>
 
+struct atome
+{
+
+};
+
+struct quadnode
+{
+
+};
+
+class quadtree
+{
+
+};
+
 
 
 #endif
