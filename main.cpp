@@ -12,6 +12,7 @@ void checkheap()
 int main(int argv, char* argc[])
 {
     atexit(checkheap);
+    system("cls");
     std::cout << "~~~ QUADTREE ~~~\n";
 
     Quadtree qt;
